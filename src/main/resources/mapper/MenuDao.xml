@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.travis.dao.MenuDao">
+	
+	<resultMap id="MenuResultMap" type="Menu">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="url" property="url"/>
+		<result column="parent_id" property="parentId"/>
+		<collection property="actionList" javaType="list" resultMap="com.travis.dao.ActionDao.ActionResultMap"/>
+	</resultMap>
+
+	<select id="selectWithAction" resultMap="MenuResultMap">
+		select m.id,m.name,m.url,m.parent_id,a.name action_name
+		,a.url action_url,a.menu_id action_menu_id,a.id action_id,a.method action_method
+		from sys_menu m left join
+		sys_action a on m.id=a.menu_id
+		<where>
+			<if test="parentId != null">
+				and m.parent_id = #{parentId}
+			</if>
+		</where>
+		order by m.order_num,convert(a.name using gbk) collate gbk_chinese_ci
+	</select>
+
+	<insert id="insert">
+		insert into sys_menu(name,url,parent_id,order_num)
+		select #{name},#{url},#{parentId}
+		,ifnull((select max(order_num)+1 from sys_menu where parent_id=#{parentId}),1)
+	</insert>
+
+	<delete id="delete">
+		delete from sys_menu where id=#{_parameter}
+	</delete>
+
+	<update id="update">
+		update sys_menu t
+		<set>
+			<if test="name != null">
+				t.name = #{name},
+			</if>
+			<if test="url != null">
+				t.url = #{url},
+			</if>
+			<if test="orderNum != null">
+				t.order_num = #{orderNum},
+			</if>
+			<if test="parentId != null">
+				t.parent_id = #{parentId},
+			</if>
+		</set>
+		where t.id=#{id}
+	</update>
+
+	<update id="updateOrderNumByParentId">
+		update sys_menu t set t.order_num = t.order_num + 1 where t.parent_id=#{_parameter}
+	</update>
+
+	<update id="updateOrderNumByMenuInclude">
+		UPDATE sys_menu SET order_num = order_num + 1
+		WHERE parent_id = #{parentId} AND order_num >= #{orderNum}
+	</update>
+
+	<update id="updateOrderNumByMenu">
+		UPDATE sys_menu SET order_num = order_num + 1
+		WHERE parent_id = #{parentId} AND order_num > #{orderNum}
+	</update>
+
+	<select id="selectById" resultType="Menu">
+		select id,name,url,parent_id,order_num from sys_menu t where t.id = #{_parameter}
+	</select>
+
+	<select id="select" resultType="Menu">
+		select t.id,t.name,t.url,t.parent_id from sys_menu t
+		<where>
+			<if test="parentId != null">
+				and t.parent_id = #{parentId}
+			</if>
+		</where>
+		order by t.order_num
+	</select>
+
+	<select id="selectZTree" resultType="Menu">
+		select t.id,t.name,t.url,t.parent_id from sys_menu t
+		order by t.order_num
+	</select>
+
+</mapper>

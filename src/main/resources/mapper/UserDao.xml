@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.travis.dao.UserDao">
+
+	<select id="select" resultType="User">
+		select id,ch_name,`name`,group_id from sys_user t
+		<where>
+			<if test="name != null">
+				and t.name = #{name}
+			</if>
+			<if test="chName != null">
+				and t.ch_name=#{chName}
+			</if>
+			<if test="password != null">
+				and t.password = #{password}
+			</if>
+		</where>
+		order by convert(ch_name using gbk) collate gbk_chinese_ci
+	</select>
+
+	<select id="selectById" resultType="User">
+		SELECT id,ch_name,name,group_id FROM sys_user WHERE id = #{_parameter}
+	</select>
+
+	<insert id="insert">
+		insert into sys_user(`name`,ch_name,`password`)
+		select #{name},#{chName},#{password} from dual
+		where not exists(select 1 from sys_user where name=#{name})
+	</insert>
+
+	<delete id="delete">
+		delete from sys_user where id=#{_parameter}
+	</delete>
+
+	<update id="update">
+		UPDATE sys_user
+		<set>
+			<if test="name != null">
+				`name` = #{name},
+			</if>
+			<if test="password != null">
+				`password` = #{password},
+			</if>
+			<if test="chName != null">
+				ch_name = #{chName},
+			</if>
+			<if test="groupId != null">
+				group_id = #{groupId}
+			</if>
+		</set>
+		WHERE id = #{id}
+		<if test="name != null">
+			AND NOT EXISTS (SELECT 1 FROM(SELECT 1 FROM sys_user WHERE `name`= #{name} AND id != #{id})t)
+		</if>
+	</update>
+
+
+</mapper>

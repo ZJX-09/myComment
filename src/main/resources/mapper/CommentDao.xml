@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.travis.dao.CommentDao">
+	<resultMap type="Comment" id="CommentResultMap">
+		<id column="id" property="id" />
+		<result column="comment" property="comment" />
+		<result column="star" property="star" />
+		<result column="create_time" property="createTime" />
+		<result column="orders_id" property="ordersId" />
+		<!--可以引用OrdersDao中的ResultMap，要引用全路径-->
+		<association property="orders" resultMap="com.travis.dao.OrdersDao.OrdersResultMap"/>
+	</resultMap>
+
+	<insert id="insert">
+		insert into comment(orders_id,comment,star,create_time)
+		 values(#{ordersId},#{comment},#{star},#{createTime})
+	</insert>
+
+	<select id="selectByPage" resultMap="CommentResultMap">
+		SELECT c.id,c.orders_id,c.`comment`,c.star,c.create_time,m.phone FROM `comment` c,orders o,member m
+		WHERE c.orders_id = o.id AND o.member_id = m.id
+		<if test="orders != null and orders.business != null and orders.business.id != null">
+			AND o.business_id = #{orders.business.id}
+		</if>
+		<if test="comment != null and comment != ''">
+			AND c.`comment` LIKE '%' #{comment} '%'
+		</if>
+		ORDER BY c.create_time DESC
+	</select>
+
+
+
+</mapper>

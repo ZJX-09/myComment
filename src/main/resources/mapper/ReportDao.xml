@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.travis.dao.ReportDao">
+	<select id="countOrder" resultType="java.util.HashMap">
+		select d.name categoryName,date_format(o.create_time,'%H') `hour`,cast(count(1) as CHAR) `count`
+		from business b,orders o,dic d
+		where b.id=o.business_id and b.category=d.code
+		and date_format(o.create_time,'%Y%m%d')
+		= date_format(date_sub(now(),interval 1 day),'%Y%m%d')
+		group by d.name,date_format(o.create_time,'%H')
+	</select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.travis.dao.AdDao">
+	<insert id="insert">
+		INSERT INTO ad(title,img_file_name,link,weight)
+		VALUES (#{title},#{imgFileName}	,#{link},#{weight})
+	</insert>
+
+	<select id="selectByPage" resultType="Ad">
+		SELECT id,title,img_file_name,link,weight FROM ad
+		<where>
+			<if test="title != null and title != ''">
+				title LIKE '%' #{title} '%'
+			</if>
+		</where>
+		ORDER BY weight DESC,id
+	</select>
+
+
+	<select id="selectById" resultType="Ad">
+		SELECT id,title,img_file_name,link,weight FROM ad WHERE id=#{_parameter}
+	</select>
+
+	<delete id="delete">
+		DELETE FROM ad WHERE id=#{_parameter}
+	</delete>
+
+	<update id="update">
+		UPDATE ad
+		<set>
+			<if test="title != null">
+				title = #{title},
+			</if>
+			<if test="imgFileName != null">
+				img_file_name = #{imgFileName},
+			</if>
+			<if test="link != null">
+				link = #{link},
+			</if>
+			<if test="weight != null">
+				weight = #{weight},
+			</if>
+		</set>
+		WHERE id=#{id}
+	</update>
+
+</mapper>

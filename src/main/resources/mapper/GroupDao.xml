@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.travis.dao.GroupDao">
+
+	<resultMap id="GroupResultMap" type="Group">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+
+		<collection property="menuList" javaType="list" ofType="Menu">
+			<result column="menu_id" property="id"/>
+			<result column="menu_name" property="name"/>
+			<result column="url" property="url"/>
+			<result column="parent_id" property="parentId"/>
+			<result column="order_num" property="orderNum"/>
+		</collection>
+
+		<collection property="actionList" javaType="list" resultMap="com.travis.dao.ActionDao.ActionResultMap"/>
+
+	</resultMap>
+
+	<insert id="insert">
+		insert into sys_group(name)
+		select #{name} from dual where not exists(select 1 from sys_group where name=#{name})
+	</insert>
+
+	<delete id="delete">
+		delete from sys_group where id=#{_parameter}
+	</delete>
+
+	<update id="update">
+		update sys_group
+		<set>
+			<if test="name != null">
+				name = #{name},
+			</if>
+		</set>
+		where id=#{id} and not exists(select 1 from(select 1 from sys_group where name=#{name} and id != #{id})a)
+	</update>
+
+	<select id="selectById" resultType="Group">
+		select id,name from sys_group where id = #{_parameter}
+	</select>
+
+	<select id="select" resultType="Group">
+		select id,name from sys_group t
+		<where>
+			<if test="name != null">
+				and t.name = #{name}
+			</if>
+		</where>
+		order by convert(name using gbk) collate gbk_chinese_ci
+	</select>
+
+	<select id="selectMenuListById" resultMap="GroupResultMap">
+		select g.id,g.name,m.id menu_id,m.name menu_name,m.url,m.parent_id,m.order_num,a.name action_name
+		,a.id action_id,a.url action_url,a.menu_id action_menu_id,a.method action_method
+		from sys_group g
+		left join sys_group_menu gm on g.id = gm.group_id
+		left join sys_menu m on gm.menu_id = m.id
+		left join sys_group_action ga on g.id = ga.group_id
+		left join sys_action a on ga.action_id = a.id
+		where g.id = #{_parameter}
+		order by m.order_num
+	</select>
+
+</mapper>

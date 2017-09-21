@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+	
+	<!-- 扫描task包 -->
+	<context:component-scan base-package="com.travis.task"/>
+
+	<!-- 启用定时任务 -->
+	<task:scheduled-tasks>
+		<!--每5分钟执行一次-->
+		<task:scheduled ref="BusinessTask" method="synNumberAndPrice" cron="0 */5 * * * ?"/>
+		<!--每5分钟执行一次-->
+		<task:scheduled ref="BusinessTask" method="synStarAndComment" cron="0 */5 * * * ?"/>
+	</task:scheduled-tasks>
+
+
+</beans>

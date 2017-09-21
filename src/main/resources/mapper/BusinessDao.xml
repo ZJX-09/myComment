@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.travis.dao.BusinessDao">
+
+	<resultMap type="Business" id="BusinessResultMap">
+		<id column="id" property="id" />
+		<result column="img_file_name" property="imgFileName" />
+		<result column="title" property="title" />
+		<result column="subtitle" property="subtitle" />
+		<result column="price" property="price" />
+		<result column="distance" property="distance" />
+		<result column="number" property="number" />
+		<result column="desc" property="desc" />
+		<result column="city" property="city" />
+		<result column="category" property="category" />
+		<result column="star_total_num" property="starTotalNum" />
+		<result column="comment_total_num" property="commentTotalNum" />
+		<association property="cityDic" javaType="Dic">
+			<result column="city_name" property="name"/>
+		</association>
+		<association property="categoryDic" javaType="Dic">
+			<result column="category_name" property="name"/>
+		</association>
+	</resultMap>
+
+	<select id="selectByPage" resultMap="BusinessResultMap">
+		select b.id,b.img_file_name,b.title,b.subtitle,b.price
+		,b.distance,b.number,b.`desc`,b.city,b.category,b.star_total_num,b.comment_total_num
+		,d_city.name city_name,d_category.name category_name
+		from
+		business b
+		left join dic d_city on b.city=d_city.code and
+		d_city.type='${@com.travis.constant.DicTypeConst@CITY}'
+		left join dic d_category on
+		b.category=d_category.code and d_category.type='${@com.travis.constant.DicTypeConst@CATEGORY}'
+		<where>
+			<if test="title != null and title != ''">
+				and b.title like '%' #{title} '%'
+			</if>
+			<if test="subtitle != null and subtitle != ''">
+				and b.subtitle like '%' #{subtitle} '%'
+			</if>
+			<if test="desc != null and desc != ''">
+				and b.`desc` like '%' #{desc} '%'
+			</if>
+			<if test="city != null and city != ''">
+				and b.city = #{city}
+			</if>
+			<if test="category != null and category != ''">
+				and b.category = #{category}
+			</if>
+		</where>
+		order by id
+	</select>
+
+	<select id="selectById" resultType="Business">
+		select
+		id,img_file_name,title,subtitle,price,distance,number,`desc`,city,category,star_total_num,comment_total_num
+		from business where id=#{_parameter}
+	</select>
+
+	<insert id="insert">
+		insert into business(img_file_name,title,subtitle,price,distance,number,`desc`,city,category,star_total_num,comment_total_num)
+		values(#{imgFileName},#{title},#{subtitle},#{price},#{distance},#{number},#{desc},#{city},#{category},#{starTotalNum},#{commentTotalNum})
+	</insert>
+
+	<delete id="delete">
+		delete from business where id = #{_parameter}
+	</delete>
+
+	<select id="selectLikeByPage" resultType="Business">
+		select id,img_file_name,title,subtitle,price,distance,number,`desc`,city,category,star_total_num,comment_total_num
+		from business
+		<where>
+			<if test="title != null and title != ''
+			 and subtitle != null and subtitle != ''
+			 and desc != null and desc != ''">
+				and
+				(title like '%' #{title} '%' or subtitle like '%' #{subtitle} '%' or `desc` like '%' #{desc} '%')
+			</if>
+			<if test="city != null and city != ''">
+				and city = #{city}
+			</if>
+			<if test="category != null and category != ''">
+				and category = #{category}
+			</if>
+		</where>
+		order by id
+	</select>
+
+	<update id="update">
+		update business
+		<set>
+			<if test="imgFileName != null">
+				img_file_name = #{imgFileName},
+			</if>
+			<if test="title != null">
+				title = #{title},
+			</if>
+			<if test="subtitle != null">
+				subtitle = #{subtitle},
+			</if>
+			<if test="city != null">
+				city = #{city},
+			</if>
+			<if test="category != null">
+				category = #{category},
+			</if>
+			<if test="distance != null">
+				distance = #{distance},
+			</if>
+			<if test="desc != null">
+				`desc` = #{desc},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<update id="updateNumberAndPrice">
+		update business b,
+
+		(select o.business_id id,sum(o.price) price_num,count(*) order_num from orders o
+		where o.create_time &lt;= #{endTime}
+		<if test="startTime != null">
+			and o.create_time &gt; #{startTime}
+		</if>
+		group by o.business_id)t
+
+		set b.price = b.price + t.price_num,b.number = b.number + t.order_num
+		where b.id = t.id
+	</update>
+
+	<update id="updateStarAndComment">
+		UPDATE 	business b,
+
+		(SELECT o.business_id id,SUM(c.star) star_num,COUNT(*) comment_num FROM `comment` c, orders o
+		WHERE c.orders_id=o.id AND c.create_time &lt;= #{endTime}
+		<if test="startTime != null">
+			AND c.create_time &gt; #{startTime}
+		</if>
+		GROUP BY o.business_id)t
+
+		SET b.star_total_num = b.star_total_num + t.star_num,b.comment_total_num = b.comment_total_num + t.comment_num
+		WHERE b.id=t.id
+	</update>
+
+</mapper>

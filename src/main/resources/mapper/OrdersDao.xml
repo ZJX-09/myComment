@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.travis.dao.OrdersDao">
+	<resultMap type="Orders" id="OrdersResultMap">
+		<id column="id" property="id" />
+		<result column="comment_state" property="commentState" />
+		<result column="price" property="price" />
+		<association property="business" javaType="Business">
+			<result column="img_file_name" property="imgFileName"/>
+			<result column="title" property="title"/>
+			<result column="number" property="number"/>
+		</association>
+		<association property="member" javaType="Member">
+			<result column="phone" property="phone"/>
+		</association>
+	</resultMap>
+
+	<insert id="insert">
+		insert into orders(business_id,member_id,num,comment_state,price,create_time)
+		 values(#{businessId},#{memberId},#{num},#{commentState},#{price},#{createTime})
+	</insert>
+	
+	<select id="selectById" resultType="Orders">
+		select id,business_id,member_id,num,comment_state,price
+		from orders where id=#{_parameter}
+	</select>
+	
+	<update id="update">
+		update orders
+		<set>
+			<if test="commentState != null">
+				comment_state = #{commentState},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	
+	<select id="select" resultMap="OrdersResultMap">
+		select o.id,o.comment_state,o.price,b.img_file_name,b.title,b.number
+		from orders o,business b where o.business_id=b.id
+		<if test="memberId != null">
+			and o.member_id = #{memberId}
+		</if>
+	</select>
+
+	<select id="selectByPage" resultMap="OrdersResultMap">
+		select o.id,o.comment_state,o.price,m.phone
+		from orders o,member m where o.member_id = m.id
+		<if test="member != null and member.phone != null and member.phone != ''">
+			and m.phone like concat('%',#{member.phone},'%')
+		</if>
+		order by m.phone
+	</select>
+
+</mapper>

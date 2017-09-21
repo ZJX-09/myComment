@@ -1,0 +1,90 @@
+.wishlistBox {
+    margin-left: -115px;
+    margin-top: -35px;
+    position: fixed;
+    height: 200px;
+    width: 570px;
+    z-index: 10000;
+    left: 340px;
+    top: 127px;
+}
+
+.personRigTop {
+    border: 1px solid #CBCBCB;
+    width: 660px;
+}
+
+.persongBgimg {
+    background: none repeat scroll 0 0 #F3F3F3;
+}
+
+.persongRightTit {
+    background-image: url("../images/personTitbg.gif");
+    background-repeat: repeat-x;
+    border-bottom: 1px solid #CBCBCB;
+    color: #000000;
+    font-size: 14px;
+    font-weight: bold;
+    height: 29px;
+    line-height: 29px;
+    width: 660px;
+}
+
+.persongRigCon {
+    height: 280px;
+    line-height: 22px;
+    margin: 8px;
+    overflow: hidden;
+    padding: 2px;
+    visibility: visible;
+}
+
+
+/* table styled from style begin */
+.x-form-table {
+    width: 100%;
+    position: relative;
+    margin: 0 auto;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: fixed;
+    font: normal 12px Verdana, Tahoma, Arial;
+}
+.x-form-table tbody tr.hide {
+    display: none;
+}
+.x-form-table tbody tr.line td {
+    border-bottom: 1px solid #eee;
+}
+.x-form-table tbody tr td.left,.x-form-table tbody tr td.right,.x-form-table tbody tr td.center {
+    padding: 5px 0;
+    vertical-align: middle;
+    font: normal 13px Verdana, Tahoma, Arial;
+    color: #000;
+}
+.x-form-table tbody tr td.left {
+    text-align: right;
+    padding-right: 5px;
+}
+.x-form-table tbody tr td.left label {
+    font: normal 13px/1.5em Verdana, Tahoma, Arial;
+}
+.x-form-table tbody tr td.left label.bold {
+    font-weight: bold;
+}
+.x-form-table tbody tr td.left em.required {
+    font-style: normal;
+    color: red;
+    font-weight: bold;
+}
+.x-form-table tbody tr td.right {
+    text-align: left;
+    padding-right: 5px;
+}
+.x-form-table tbody tr td.center {
+    text-align: center;
+}
+.x-form-table tbody tr td.submit {
+    padding: 10px 0;
+}
+/* table styled from style end */

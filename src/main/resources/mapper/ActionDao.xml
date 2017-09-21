@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.travis.dao.ActionDao">
+
+    <resultMap id="ActionResultMap" type="Action">
+        <id column="action_id" property="id"/>
+        <result column="action_name" property="name"/>
+        <result column="action_url" property="url"/>
+        <result column="action_menu_id" property="menuId"/>
+        <result column="action_method" property="method"/>
+    </resultMap>
+
+    <delete id="deleteByMenuId">
+        delete from sys_action where menu_id = #{_parameter}
+    </delete>
+    <insert id="insert">
+        insert into sys_action(name,url,menu_id,method) values(#{name},#{url},#{menuId},#{method})
+    </insert>
+    <delete id="deleteById">
+        delete from sys_action where id = #{_parameter}
+    </delete>
+    <update id="update">
+        update sys_action t
+        <set>
+            <if test="name != null and name != ''">
+                t.name = #{name},
+            </if>
+            <if test="url != null and url != ''">
+                t.url = #{url},
+            </if>
+            <if test="menuId != null">
+                t.menu_id = #{menuId},
+            </if>
+            <if test="method != null and method != ''">
+                t.method = #{method},
+            </if>
+        </set>
+        where t.id=#{id}
+    </update>
+
+    <select id="selectById" resultType="Action">
+        select id,name,url,menu_id,method from sys_action where id=#{_parameter}
+    </select>
+
+</mapper>

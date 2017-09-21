@@ -1,0 +1,65 @@
+.rMenu {
+	display: block;
+	position: absolute;
+	visibility: hidden;
+	z-index: 500;
+	left: 690px;
+	top: 44px;
+	font: 12px/180% Arial, Helvetica, sans-serif, "新宋体";
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+.rMenuLi {
+	margin: 0px;
+	color: rgb(0, 0, 0);
+	display: block;
+	cursor: default;
+	padding: 3px;
+	border: 1px solid rgb(255, 255, 255);
+	background-color: transparent;
+}
+
+.rMenuLiMove {
+	margin: 0px;
+	color: rgb(0, 0, 0);
+	display: block;
+	cursor: default;
+	padding: 3px;
+	border: 1px solid rgb(10, 36, 106);
+	background-color: rgb(182, 189, 210);
+}
+
+.rMenuUi {
+	list-style: outside none none;
+	padding: 1px;
+	margin: 0px;
+	background-color: rgb(255, 255, 255);
+	border: 1px solid rgb(153, 153, 153);
+	width: 100px;
+}
+
+.window {
+	display: none;
+	position: absolute;
+	z-index: 2;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.75);
+}
+
+.tip {
+	width: 100%;
+	height: auto;
+	position: absolute;
+	top: 30%;
+	text-align: center;
+	background: none;
+}
+
+body {
+	margin: 0px;
+}
